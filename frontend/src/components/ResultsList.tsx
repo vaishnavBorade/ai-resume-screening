@@ -1,14 +1,20 @@
-export default function ResultsList({ results }: { results: any[] }) {
-  if (!results.length) return null;
+interface ResultsListProps {
+  results: any[];
+  onCandidateClick: (candidate: any) => void;
+}
 
+export default function ResultsList({ results, onCandidateClick }: ResultsListProps) {
   return (
-    <div className="max-w-3xl mx-auto mt-8 space-y-4">
-      <h3 className="text-xl font-bold">Results</h3>
-      {results.map((res, i) => (
-        <div key={i} className="p-4 bg-gray-100 rounded shadow">
-          <h4 className="font-semibold text-blue-800">{res.name}</h4>
-          <p className="text-green-600 font-medium">Score: {res.score}/100</p>
-          <p className="mt-2 text-gray-700 whitespace-pre-line">{res.explanation}</p>
+    <div className="space-y-4">
+      {results.map((r, index) => (
+        <div
+          key={index}
+          onClick={() => onCandidateClick(r)}
+          className="p-4 border rounded cursor-pointer hover:bg-accent"
+        >
+          <p><strong>Name:</strong> {r.name}</p>
+          <p><strong>Score:</strong> {r.score}</p>
+          <p><strong>Explanation:</strong> {r.explanation.slice(0, 100)}...</p>
         </div>
       ))}
     </div>

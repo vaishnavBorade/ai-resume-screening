@@ -1,6 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   onResults: (results: any[]) => void;
@@ -10,6 +14,7 @@ interface Props {
 export default function UploadForm({ onResults, setLoading }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const jdInputRef = useRef<HTMLTextAreaElement>(null);
+  const [dragging, setDragging] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +39,7 @@ export default function UploadForm({ onResults, setLoading }: Props) {
       const data = await res.json();
       onResults(data.results);
 
-      // Clear form inputs after success ✅
+      // Clear inputs
       if (fileInputRef.current) fileInputRef.current.value = "";
       if (jdInputRef.current) jdInputRef.current.value = "";
     } catch (err) {
@@ -46,25 +51,54 @@ export default function UploadForm({ onResults, setLoading }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        accept=".pdf"
-        className="w-full border p-2 rounded"
-      />
-      <textarea
-        ref={jdInputRef}
-        rows={6}
-        placeholder="Paste job description here..."
-        className="w-full border p-2 rounded"
-      ></textarea>
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      <div
+        className={`border-2 ${
+          dragging ? "border-blue-500" : "border-dashed"
+        } border-gray-300 rounded-md p-6 text-center bg-gray-50 dark:bg-zinc-800`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragging(false);
+          if (fileInputRef.current) {
+            fileInputRef.current.files = e.dataTransfer.files;
+          }
+        }}
       >
+        <Label htmlFor="file-upload" className="block text-sm font-medium mb-2">
+          Upload Resumes (PDF)
+        </Label>
+        <Input
+          id="file-upload"
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept=".pdf"
+          className="cursor-pointer"
+        />
+        <p className="text-xs text-muted-foreground mt-2">
+          Drag and drop PDFs here or click to browse.
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="job-desc" className="block text-sm font-medium mb-2">
+          Job Description
+        </Label>
+        <Textarea
+          id="job-desc"
+          ref={jdInputRef}
+          rows={6}
+          placeholder="Paste job description here..."
+        />
+      </div>
+
+      <Button type="submit" className="w-full">
         Submit
-      </button>
+      </Button>
     </form>
   );
 }

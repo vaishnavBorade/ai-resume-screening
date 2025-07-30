@@ -1,12 +1,12 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from parser import extract_text_from_pdf
-from embedder import get_embedding
 from scorer import build_faiss_index, search_top_k
 from llm import explain_match
+from cache import init_db, get_embedding_with_cache
 import re
 from collections import OrderedDict
-from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 app = FastAPI()
 
@@ -17,39 +17,43 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+@app.on_event("startup")
+async def startup_event():
+    await init_db()
+
 @app.post("/api/rank")
-async def rank_resumes(files: list[UploadFile] = File(...), job_description: str = Form(...)):
+async def rank_resumes(
+    files: list[UploadFile] = File(...),
+    job_description: str = Form(...)
+):
     unique_resumes = OrderedDict()
 
-    # Step 1: Deduplicate by filename and extract text
+    # Step 1: Deduplicate and extract text
     for file in files:
         if file.filename not in unique_resumes:
             content = await file.read()
             unique_resumes[file.filename] = extract_text_from_pdf(content)
 
-    # Step 2: Generate embeddings in parallel
     filenames = list(unique_resumes.keys())
     texts = list(unique_resumes.values())
 
-    with ThreadPoolExecutor() as executor:
-        embeddings = list(executor.map(get_embedding, texts))
-
+    # Step 2: Get embeddings (from cache or compute)
+    embeddings = await asyncio.gather(*[get_embedding_with_cache(text) for text in texts])
     resumes = list(zip(filenames, texts))
 
-    # Step 3: Build index and find top matches
-    job_vec = get_embedding(job_description)
+    # Step 3: Build index for matching
+    job_vec = await get_embedding_with_cache(job_description)
     index = build_faiss_index(embeddings)
     idxs, scores = search_top_k(index, job_vec, k=10)
 
-    # Step 4: Score and explain for confident matches
+    # Step 4: LLM scoring + filtering
     results = []
     seen_names = set()
-    CONFIDENCE_THRESHOLD = 0.6  # Cosine similarity threshold (0 to 1)
+    CONFIDENCE_THRESHOLD = 0.6
 
     for i, sim_score in zip(idxs, scores):
         if sim_score < CONFIDENCE_THRESHOLD:
-            continue  # Skip low-confidence matches
-
+            continue
         name, text = resumes[i]
         if name in seen_names:
             continue
@@ -69,6 +73,6 @@ async def rank_resumes(files: list[UploadFile] = File(...), job_description: str
         if len(results) >= 10:
             break
 
-    # Step 5: Sort by score
+    # Step 5: Sort and return
     results.sort(key=lambda x: x["score"], reverse=True)
     return {"results": results}
