@@ -1,6 +1,7 @@
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+# Load model only once globally
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
 def get_embedding(text: str):
-    return model.encode([text])[0]
+    return model.encode(text)

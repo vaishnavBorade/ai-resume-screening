@@ -3,7 +3,16 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
+
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+# Define constants once
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+HEADERS = {
+    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+    "Content-Type": "application/json"
+}
+MODEL_NAME = "mistralai/mistral-7b-instruct"
 
 def explain_match(jd: str, resume_text: str) -> str:
     prompt = f"""
@@ -16,15 +25,13 @@ Job Description:
 Resume:
 {resume_text}
 """
+
     try:
         response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json"
-            },
+            OPENROUTER_URL,
+            headers=HEADERS,
             json={
-                "model": "mistralai/mistral-7b-instruct",
+                "model": MODEL_NAME,
                 "messages": [
                     {"role": "system", "content": "You are a helpful recruiter."},
                     {"role": "user", "content": prompt}
@@ -45,6 +52,7 @@ Resume:
     except requests.exceptions.RequestException as e:
         print("[🔥 NETWORK EXCEPTION]", e)
         return "Score: 0\n[LLM Network Exception]"
+
     except Exception as e:
         print("[🔥 GENERAL EXCEPTION]", e)
         return "Score: 0\n[Unexpected error occurred]"
