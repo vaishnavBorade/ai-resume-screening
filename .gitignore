@@ -13,3 +13,5 @@ backend/venv/
 
 # Ignore env variables
 .env
+
+
