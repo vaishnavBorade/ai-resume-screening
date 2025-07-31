@@ -40,12 +40,12 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
+```
 
-
-#Create a .env file inside the backend/ folder with:
+Create a .env file inside the backend/ folder with:
 ```bash
 OPENROUTER_API_KEY=your_openrouter_key
 OCR_API_KEY=your_ocr_space_api_key
-
+```
 🔑 Get an OpenRouter key from https://openrouter.ai.
 🧾 Get a free OCR key from https://ocr.space/OCRAPI.
