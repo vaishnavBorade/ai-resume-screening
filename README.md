@@ -123,3 +123,17 @@ You’ll see the Resume Ranking UI.
 NEXT_PUBLIC_BACKEND_URL=https://your-backend-url.onrender.com
 ```
 4. Click Deploy.
+
+## 🙏 Credits
+
+- [Sentence Transformers](https://www.sbert.net/) – for state-of-the-art embedding models.
+- [FAISS](https://github.com/facebookresearch/faiss) – Facebook’s library for efficient similarity search.
+- [OCR.Space](https://ocr.space/OCRAPI) – for reliable OCR of scanned PDF resumes.
+- [OpenRouter](https://openrouter.ai) – unified API for accessing powerful LLMs (like GPT-4, Claude, Mistral).
+- [shadcn/ui](https://ui.shadcn.com/) – for beautiful and customizable React UI components.
+- [Tailwind CSS](https://tailwindcss.com) – utility-first styling for a modern UI.
+- [Render](https://render.com) & [Vercel](https://vercel.com) – for simple, free deployment.
+
+---
+
+> Built with ❤️ by [Vaishnav Borade](https://github.com/vaishnavBorade)
