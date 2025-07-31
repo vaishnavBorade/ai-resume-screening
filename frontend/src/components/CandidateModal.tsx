@@ -20,13 +20,13 @@ export default function CandidateModal({ open, onClose, candidate }: CandidateMo
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden dark:text-zinc-100">
         <DialogHeader>
           <DialogTitle>{candidate.name}</DialogTitle>
           <DialogDescription>Score: {candidate.score}</DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-[60vh] pr-4">
-          <p className="mb-4">
+          <p className="mb-4 text-zinc-800 dark:text-zinc-100">
             <span className="font-semibold">Explanation: </span>
             {candidate.explanation}
           </p>
