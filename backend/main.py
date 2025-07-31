@@ -1,4 +1,3 @@
-# /main.py
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from parser import extract_text_from_pdf
@@ -29,7 +28,7 @@ async def rank_resumes(
 ):
     unique_resumes = OrderedDict()
 
-    # Step 1: Deduplicate and extract text
+    # Deduplicate and extract text
     for file in files:
         if file.filename not in unique_resumes:
             content = await file.read()
@@ -38,16 +37,16 @@ async def rank_resumes(
     filenames = list(unique_resumes.keys())
     texts = list(unique_resumes.values())
 
-    # Step 2: Get embeddings (from cache or compute)
+    # Get embeddings (from cache or compute)
     embeddings = await asyncio.gather(*[get_embedding_with_cache(text) for text in texts])
     resumes = list(zip(filenames, texts))
 
-    # Step 3: Build index for matching
+    # Build index for matching
     job_vec = await get_embedding_with_cache(job_description)
     index = build_faiss_index(embeddings)
     idxs, scores = search_top_k(index, job_vec, k=10)
 
-    # Step 4: LLM scoring + filtering
+    # LLM scoring + filtering
     results = []
     seen_names = set()
     CONFIDENCE_THRESHOLD = 0.6
@@ -74,6 +73,6 @@ async def rank_resumes(
         if len(results) >= 10:
             break
 
-    # Step 5: Sort and return
+    # Sort and return
     results.sort(key=lambda x: x["score"], reverse=True)
     return {"results": results}

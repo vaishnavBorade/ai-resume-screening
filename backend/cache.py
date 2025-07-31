@@ -1,4 +1,3 @@
-# /cache.py
 import sqlite3
 import hashlib
 import pickle
@@ -9,7 +8,7 @@ from sentence_transformers import SentenceTransformer
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 DB_PATH = "resume_cache.db"
-MAX_CACHE_ENTRIES = 500  # Adjust this as needed
+MAX_CACHE_ENTRIES = 500
 
 async def init_db():
     if not os.path.exists(DB_PATH):
@@ -36,7 +35,7 @@ async def get_embedding_with_cache(text: str):
     row = cursor.fetchone()
     if row:
         conn.close()
-        return pickle.loads(row[0])  # Return cached
+        return pickle.loads(row[0])
 
     # Compute if not cached
     embedding = model.encode(text)
@@ -44,7 +43,7 @@ async def get_embedding_with_cache(text: str):
     cursor.execute("INSERT OR REPLACE INTO embeddings (hash, vector) VALUES (?, ?)", (text_hash, pickled))
     conn.commit()
 
-    # Enforce max cache size
+    # max cache size
     cursor.execute("SELECT COUNT(*) FROM embeddings")
     count = cursor.fetchone()[0]
     if count > MAX_CACHE_ENTRIES:

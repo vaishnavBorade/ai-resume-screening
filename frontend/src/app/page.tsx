@@ -42,18 +42,15 @@ export default function Home() {
     let y = 10;
   
     results.forEach((r, i) => {
-      // Wrap long text
       const explanationLines = doc.splitTextToSize(`Explanation: ${r.explanation}`, 180);
       const resumeLines = doc.splitTextToSize(`Name: ${r.name}\nScore: ${r.score}`, 180);
   
-      // Add content
       doc.text(resumeLines, 10, y);
       y += resumeLines.length * 10;
   
       doc.text(explanationLines, 10, y);
       y += explanationLines.length * 10 + 10;
   
-      // Auto page break if needed
       if (y > 270 && i < results.length - 1) {
         doc.addPage();
         y = 10;
