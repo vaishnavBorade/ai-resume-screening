@@ -4,8 +4,8 @@ This is a full-stack AI-powered resume screening web application. It allows recr
 
 ## 🌐 Live Demo
 
-- **Frontend**: [https://your-frontend-url.onrender.com](https://your-frontend-url.onrender.com)
-- **Backend API**: [https://your-backend-url.onrender.com](https://your-backend-url.onrender.com)
+- **Frontend**: [https://frontend-qc86.vercel.app/](https://frontend-qc86.vercel.app/)
+- **Backend API**: [https://backend-fi8u.onrender.com](https://backend-fi8u.onrender.com)
 
 ## ✨ Features
 
