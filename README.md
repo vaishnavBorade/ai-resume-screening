@@ -2,10 +2,7 @@
 
 This is a full-stack AI-powered resume screening web application. It allows recruiters to upload multiple resumes (PDFs), input a job description, and receive ranked candidates based on semantic similarity. It uses Sentence Transformers for embeddings, FAISS for vector similarity search, and OpenAI/Mistral for LLM-based explanations.
 
-## 🌐 Live Demo
-
-- **Frontend**: [https://frontend-qc86.vercel.app/](https://frontend-qc86.vercel.app/)
-- **Backend API**: [https://backend-fi8u.onrender.com](https://backend-fi8u.onrender.com)
+## 🌐 Live Demo: [https://frontend-qc86.vercel.app/](https://frontend-qc86.vercel.app/)
 
 ## ✨ Features
 
